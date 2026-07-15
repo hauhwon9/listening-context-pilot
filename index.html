@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Listening Context Similarity Pilot</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Pilot Study</p>
+      <h1>Listening Context and Music Similarity</h1>
+    </div>
+    <div class="header-controls">
+      <label>
+        Participant ID
+        <input id="participantId" type="text" placeholder="e.g. P01">
+      </label>
+      <label>
+        Context
+        <select id="contextSelect">
+          <option value="focused">Focused individual</option>
+          <option value="social">Energetic social</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <section class="band instruction-card">
+      <h2>Study Instructions</h2>
+      <p>
+        Thank you for taking part in this pilot study. The aim is to investigate whether listening context affects how people judge music similarity.
+        Songs are used as familiar examples for subjective judgement; this is not a test of your musical knowledge.
+      </p>
+      <p>
+        There are no right or wrong answers. Please use your intuitive judgement of how similar the songs feel in the given listening situation.
+        You may pause or take a short break at any point.
+      </p>
+      <label class="consent-row">
+        <input id="consentCheck" type="checkbox">
+        <span>I confirm that I am over 16 and agree to take part in this anonymised pilot study.</span>
+      </label>
+    </section>
+
+    <section class="band context-card">
+      <h2>Scenario</h2>
+      <p id="contextPrompt"></p>
+    </section>
+
+    <section class="band">
+      <div class="section-heading">
+        <h2>1. Song Overview</h2>
+        <p>This overview is optional. The same audio controls also appear inside each rating pair below.</p>
+      </div>
+      <div id="songList" class="song-grid"></div>
+    </section>
+
+    <section class="band">
+      <div class="section-heading">
+        <h2>2. Familiarity</h2>
+        <p>Rate how familiar each song is to you.</p>
+      </div>
+      <div id="familiarityList" class="form-list"></div>
+    </section>
+
+    <section class="band">
+      <div class="section-heading">
+        <h2>3. Listen And Rate Each Pair</h2>
+        <p>Listen to the two songs in each pair, then answer both directions below that pair. Treat Song A as the reference when answering A to B. Use 0 for not similar at all and 100 for extremely similar.</p>
+      </div>
+      <div id="pairList" class="pair-list"></div>
+    </section>
+
+    <section class="band">
+      <div class="section-heading">
+        <h2>4. Feature Importance</h2>
+        <p>How important were these features when judging similarity in this context? Use 1 for not important and 7 for very important.</p>
+      </div>
+      <div id="featureList" class="feature-list"></div>
+    </section>
+
+    <section class="band">
+      <div class="section-heading">
+        <h2>5. Short Explanation</h2>
+        <p>Briefly explain what made songs feel similar or different in this context.</p>
+      </div>
+      <textarea id="commentBox" rows="5" placeholder="Type your answer here..."></textarea>
+    </section>
+
+    <section class="band finish-card">
+      <h2>Finish</h2>
+      <p>Please download the JSON or CSV response file and send it back to the researcher. Your answers are saved only in this browser until you download them.</p>
+    </section>
+
+    <section class="actions">
+      <button id="downloadJson" type="button">Download JSON</button>
+      <button id="downloadCsv" type="button">Download CSV</button>
+      <button id="clearForm" type="button" class="secondary">Clear Form</button>
+    </section>
+  </main>
+
+  <template id="rangeTemplate">
+    <label class="range-row">
+      <span class="range-label"></span>
+      <input type="range" min="0" max="100" value="50">
+      <output>50</output>
+    </label>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
