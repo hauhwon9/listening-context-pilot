@@ -41,6 +41,8 @@ const prompts = {
     "Imagine you are in an energetic or social situation, such as a party, workout, or group activity. Please judge song similarity based on how similar the songs feel in this energetic social listening situation."
 };
 
+const ENABLE_AUDIO_CLIPS = false;
+
 const songById = Object.fromEntries(songs.map(song => [song.id, song]));
 const participantInput = document.querySelector("#participantId");
 const consentCheck = document.querySelector("#consentCheck");
@@ -60,6 +62,17 @@ function searchUrl(song) {
 
 function clipPath(song) {
   return `assets/audio/${song.id}.mp3`;
+}
+
+function mediaHtml(song) {
+  const audio = ENABLE_AUDIO_CLIPS
+    ? `<audio controls preload="none" src="${clipPath(song)}"></audio>
+       <p class="audio-fallback" hidden>Clip not available. Please use the original/search link below.</p>`
+    : `<p class="audio-fallback">Audio clips are not hosted here. Please use the original/search link below.</p>`;
+  return `
+    ${audio}
+    <a class="song-link" href="${searchUrl(song)}" target="_blank" rel="noreferrer">Open original/search</a>
+  `;
 }
 
 function applyContextFromUrl() {
@@ -118,10 +131,8 @@ function renderSongs() {
       <p class="song-role">${song.id} · ${song.role}</p>
       <h3>${song.title}</h3>
       <p class="song-meta">${song.artist}</p>
-      <audio controls preload="none" src="${clipPath(song)}"></audio>
-      <p class="audio-fallback" hidden>Clip not available. Please use the original/search link below.</p>
       <div class="song-actions">
-        <a class="song-link" href="${searchUrl(song)}" target="_blank" rel="noreferrer">Open original/search</a>
+        ${mediaHtml(song)}
       </div>
     `;
     songList.appendChild(card);
@@ -135,9 +146,7 @@ function makePairListenCard(song, label) {
     <p class="song-role">${label} · ${song.id}</p>
     <h3>${song.title}</h3>
     <p class="song-meta">${song.artist}</p>
-    <audio controls preload="none" src="${clipPath(song)}"></audio>
-    <p class="audio-fallback" hidden>Clip not available. Please use the original/search link below.</p>
-    <a class="song-link" href="${searchUrl(song)}" target="_blank" rel="noreferrer">Open original/search</a>
+    ${mediaHtml(song)}
   `;
   return card;
 }

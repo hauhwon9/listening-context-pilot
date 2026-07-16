@@ -54,7 +54,9 @@ If a clip is missing, participants can use the `Open original/search` link.
 
 Only host audio clips remotely if you have the right to share them.
 
-If no clip files are uploaded, the page will hide the broken audio player and ask participants to use the original/search link.
+By default, embedded audio clips are disabled so remote participants do not see broken audio players. Participants use the `Open original/search` link instead.
+
+To enable hosted clips later, upload the MP3 files and set `ENABLE_AUDIO_CLIPS` to `true` in `app.js`.
 
 ## Data Collection
 
