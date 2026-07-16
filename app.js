@@ -77,12 +77,20 @@ async function fetchPreviewUrl(song) {
     term: `${song.title} ${song.artist}`,
     media: "music",
     entity: "song",
-    limit: "1"
+    limit: "10",
+    country: "US"
   });
   const response = await fetch(`${PREVIEW_API}?${query.toString()}`);
   if (!response.ok) throw new Error(`Preview lookup failed for ${song.id}`);
   const data = await response.json();
-  return data.results?.[0]?.previewUrl || "";
+  const normalise = value => String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const targetTitle = normalise(song.title);
+  const targetArtist = normalise(song.artist);
+  const exact = data.results?.find(item =>
+    normalise(item.trackName) === targetTitle &&
+    targetArtist.includes(normalise(item.artistName))
+  );
+  return exact?.previewUrl || data.results?.find(item => item.previewUrl)?.previewUrl || "";
 }
 
 async function loadAudioPreviews() {
