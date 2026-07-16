@@ -119,6 +119,7 @@ function renderSongs() {
       <h3>${song.title}</h3>
       <p class="song-meta">${song.artist}</p>
       <audio controls preload="none" src="${clipPath(song)}"></audio>
+      <p class="audio-fallback" hidden>Clip not available. Please use the original/search link below.</p>
       <div class="song-actions">
         <a class="song-link" href="${searchUrl(song)}" target="_blank" rel="noreferrer">Open original/search</a>
       </div>
@@ -135,9 +136,22 @@ function makePairListenCard(song, label) {
     <h3>${song.title}</h3>
     <p class="song-meta">${song.artist}</p>
     <audio controls preload="none" src="${clipPath(song)}"></audio>
+    <p class="audio-fallback" hidden>Clip not available. Please use the original/search link below.</p>
     <a class="song-link" href="${searchUrl(song)}" target="_blank" rel="noreferrer">Open original/search</a>
   `;
   return card;
+}
+
+function attachAudioFallbacks() {
+  document.querySelectorAll("audio").forEach(audio => {
+    audio.addEventListener("error", () => {
+      audio.hidden = true;
+      const fallback = audio.nextElementSibling;
+      if (fallback?.classList.contains("audio-fallback")) {
+        fallback.hidden = false;
+      }
+    });
+  });
 }
 
 function renderFamiliarity() {
@@ -314,6 +328,7 @@ function init() {
   renderFamiliarity();
   renderPairs();
   renderFeatures();
+  attachAudioFallbacks();
   setPrompt();
   restoreDraft();
 

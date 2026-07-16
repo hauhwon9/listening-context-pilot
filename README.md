@@ -54,6 +54,8 @@ If a clip is missing, participants can use the `Open original/search` link.
 
 Only host audio clips remotely if you have the right to share them.
 
+If no clip files are uploaded, the page will hide the broken audio player and ask participants to use the original/search link.
+
 ## Data Collection
 
 The page does not use a backend. Participants download a JSON or CSV file at the end and send it back to the researcher.

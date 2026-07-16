@@ -188,6 +188,13 @@ audio {
   margin-top: 10px;
 }
 
+.audio-fallback {
+  margin: 10px 0 0;
+  color: var(--warn);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .song-actions {
   display: flex;
   gap: 8px;
