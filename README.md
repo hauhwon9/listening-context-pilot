@@ -29,7 +29,7 @@ The same URL parameters will also work after remote hosting.
 
 ## Audio Previews
 
-The page uses fixed 30-second preview links from Apple's public music previews. If a preview is unavailable on a participant's network, participants can use the `Open original/search` link.
+The page automatically loads 30-second song previews from Apple's public iTunes Search API. If a preview is unavailable, participants can use the `Open original/search` link.
 
 You can still host your own clips if needed. Put short audio clips in:
 

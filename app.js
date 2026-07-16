@@ -1,14 +1,14 @@
 const songs = [
-  { id: "S1", title: "River Flows In You", artist: "Yiruma", role: "Calm instrumental anchor", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/cb/24/ac/cb24ac75-128c-f817-7d81-7fbffbdaafe3/mzaf_10771880904938057317.plus.aac.p.m4a" },
-  { id: "S2", title: "Sweden", artist: "C418", role: "Calm ambient anchor", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/af/31/01/af310107-0572-ec8a-0e8b-d99035407230/mzaf_13152283240780583171.plus.aac.p.m4a" },
-  { id: "S3", title: "The Night We Met", artist: "Lord Huron", role: "Low-energy emotional vocal bridge", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4b/36/b7/4b36b739-1de7-e0ae-45da-9a66463127ac/mzaf_1821541347983595183.plus.aac.p.m4a" },
-  { id: "S4", title: "普通朋友", artist: "陶喆", role: "Chinese R&B / vocal bridge", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/07/24/34/07243445-d94a-0f14-12a4-dd46a0886c15/mzaf_13292192010675386253.plus.aac.p.m4a" },
-  { id: "S5", title: "Attention", artist: "Charlie Puth", role: "Groove / social bridge", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0b/76/e1/0b76e164-35b8-7fbb-a773-9832f3155532/mzaf_12020704327610118862.plus.aac.p.m4a" },
-  { id: "S6", title: "Blueming", artist: "IU", role: "Bright pop / K-pop bridge", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/99/56/19/995619c5-5310-d3b0-de45-0ff352bc58d9/mzaf_11001517585085545132.plus.aac.p.m4a" },
-  { id: "S7", title: "Closer", artist: "The Chainsmokers ft. Halsey", role: "Electronic pop bridge", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e9/9d/6f/e99d6fdf-6b71-7567-a423-fce5e51ddad3/mzaf_17383656644300592526.plus.aac.p.m4a" },
-  { id: "S8", title: "Blinding Lights", artist: "The Weeknd", role: "Synth-pop / energetic bridge", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/19/d6/60/19d660ff-e3a9-8377-15a3-ce4b28e89cac/mzaf_18422426156481158187.plus.aac.p.m4a" },
-  { id: "S9", title: "Give Me Everything", artist: "Pitbull, AFROJACK, Ne-Yo, Nayer", role: "Party energetic anchor", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/f7/f9/47/f7f947ce-098f-ccf5-16aa-00ef1db59719/mzaf_9115727429891431447.plus.aac.p.m4a" },
-  { id: "S10", title: "Dynamite", artist: "BTS", role: "K-pop high-energy social anchor", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a3/a0/a6/a3a0a6b5-4715-b872-1aff-21e42634d9cd/mzaf_7224423421767640589.plus.aac.p.m4a" }
+  { id: "S1", title: "River Flows In You", artist: "Yiruma", role: "Calm instrumental anchor" },
+  { id: "S2", title: "Sweden", artist: "C418", role: "Calm ambient anchor" },
+  { id: "S3", title: "The Night We Met", artist: "Lord Huron", role: "Low-energy emotional vocal bridge" },
+  { id: "S4", title: "普通朋友", artist: "陶喆", role: "Chinese R&B / vocal bridge" },
+  { id: "S5", title: "Attention", artist: "Charlie Puth", role: "Groove / social bridge" },
+  { id: "S6", title: "Blueming", artist: "IU", role: "Bright pop / K-pop bridge" },
+  { id: "S7", title: "Closer", artist: "The Chainsmokers ft. Halsey", role: "Electronic pop bridge" },
+  { id: "S8", title: "Blinding Lights", artist: "The Weeknd", role: "Synth-pop / energetic bridge" },
+  { id: "S9", title: "Give Me Everything", artist: "Pitbull, AFROJACK, Ne-Yo, Nayer", role: "Party energetic anchor" },
+  { id: "S10", title: "Dynamite", artist: "BTS", role: "K-pop high-energy social anchor" }
 ];
 
 const pairs = [
@@ -41,6 +41,8 @@ const prompts = {
     "Imagine you are in an energetic or social situation, such as a party, workout, or group activity. Please judge song similarity based on how similar the songs feel in this energetic social listening situation."
 };
 
+const PREVIEW_API = "https://itunes.apple.com/search";
+
 const songById = Object.fromEntries(songs.map(song => [song.id, song]));
 const participantInput = document.querySelector("#participantId");
 const consentCheck = document.querySelector("#consentCheck");
@@ -64,10 +66,63 @@ function clipPath(song) {
 
 function mediaHtml(song) {
   return `
-    <audio controls preload="none" src="${song.previewUrl}"></audio>
-    <p class="audio-fallback">30-second preview loaded.</p>
+    <audio controls preload="none" data-song-id="${song.id}"></audio>
+    <p class="audio-fallback">Loading 30-second preview...</p>
     <a class="song-link" href="${searchUrl(song)}" target="_blank" rel="noreferrer">Open original/search</a>
   `;
+}
+
+async function fetchPreviewUrl(song) {
+  const query = new URLSearchParams({
+    term: `${song.title} ${song.artist}`,
+    media: "music",
+    entity: "song",
+    limit: "10",
+    country: "US"
+  });
+  const response = await fetch(`${PREVIEW_API}?${query.toString()}`);
+  if (!response.ok) throw new Error(`Preview lookup failed for ${song.id}`);
+  const data = await response.json();
+  const normalise = value => String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const targetTitle = normalise(song.title);
+  const targetArtist = normalise(song.artist);
+  const exact = data.results?.find(item =>
+    normalise(item.trackName) === targetTitle &&
+    targetArtist.includes(normalise(item.artistName))
+  );
+  return exact?.previewUrl || data.results?.find(item => item.previewUrl)?.previewUrl || "";
+}
+
+async function loadAudioPreviews() {
+  await Promise.all(
+    songs.map(async song => {
+      const players = document.querySelectorAll(`audio[data-song-id="${song.id}"]`);
+      const messages = Array.from(players).map(player => player.nextElementSibling);
+      try {
+        const previewUrl = await fetchPreviewUrl(song);
+        if (!previewUrl) throw new Error(`No preview found for ${song.id}`);
+        players.forEach(player => {
+          player.src = previewUrl;
+          player.hidden = false;
+        });
+        messages.forEach(message => {
+          if (message?.classList.contains("audio-fallback")) {
+            message.textContent = "30-second preview loaded.";
+          }
+        });
+      } catch {
+        players.forEach(player => {
+          player.hidden = true;
+          player.removeAttribute("src");
+        });
+        messages.forEach(message => {
+          if (message?.classList.contains("audio-fallback")) {
+            message.textContent = "Preview not available. Please use the original/search link below.";
+          }
+        });
+      }
+    })
+  );
 }
 
 function applyContextFromUrl() {
@@ -333,6 +388,7 @@ function init() {
   renderPairs();
   renderFeatures();
   attachAudioFallbacks();
+  loadAudioPreviews();
   setPrompt();
   restoreDraft();
 
