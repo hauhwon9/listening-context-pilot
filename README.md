@@ -27,9 +27,11 @@ http://localhost:8123/context-pilot-survey/?context=social
 
 The same URL parameters will also work after remote hosting.
 
-## Audio Clips
+## Audio Previews
 
-Put short audio clips in:
+The page automatically loads 30-second song previews from Apple's public iTunes Search API. If a preview is unavailable, participants can use the `Open original/search` link.
+
+You can still host your own clips if needed. Put short audio clips in:
 
 ```text
 assets/audio/
@@ -50,13 +52,7 @@ S9.mp3
 S10.mp3
 ```
 
-If a clip is missing, participants can use the `Open original/search` link.
-
 Only host audio clips remotely if you have the right to share them.
-
-By default, embedded audio clips are disabled so remote participants do not see broken audio players. Participants use the `Open original/search` link instead.
-
-To enable hosted clips later, upload the MP3 files and set `ENABLE_AUDIO_CLIPS` to `true` in `app.js`.
 
 ## Data Collection
 

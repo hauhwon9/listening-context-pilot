@@ -41,7 +41,7 @@ const prompts = {
     "Imagine you are in an energetic or social situation, such as a party, workout, or group activity. Please judge song similarity based on how similar the songs feel in this energetic social listening situation."
 };
 
-const ENABLE_AUDIO_CLIPS = false;
+const PREVIEW_API = "https://itunes.apple.com/search";
 
 const songById = Object.fromEntries(songs.map(song => [song.id, song]));
 const participantInput = document.querySelector("#participantId");
@@ -65,14 +65,56 @@ function clipPath(song) {
 }
 
 function mediaHtml(song) {
-  const audio = ENABLE_AUDIO_CLIPS
-    ? `<audio controls preload="none" src="${clipPath(song)}"></audio>
-       <p class="audio-fallback" hidden>Clip not available. Please use the original/search link below.</p>`
-    : `<p class="audio-fallback">Audio clips are not hosted here. Please use the original/search link below.</p>`;
   return `
-    ${audio}
+    <audio controls preload="none" data-song-id="${song.id}"></audio>
+    <p class="audio-fallback">Loading 30-second preview...</p>
     <a class="song-link" href="${searchUrl(song)}" target="_blank" rel="noreferrer">Open original/search</a>
   `;
+}
+
+async function fetchPreviewUrl(song) {
+  const query = new URLSearchParams({
+    term: `${song.title} ${song.artist}`,
+    media: "music",
+    entity: "song",
+    limit: "1"
+  });
+  const response = await fetch(`${PREVIEW_API}?${query.toString()}`);
+  if (!response.ok) throw new Error(`Preview lookup failed for ${song.id}`);
+  const data = await response.json();
+  return data.results?.[0]?.previewUrl || "";
+}
+
+async function loadAudioPreviews() {
+  await Promise.all(
+    songs.map(async song => {
+      const players = document.querySelectorAll(`audio[data-song-id="${song.id}"]`);
+      const messages = Array.from(players).map(player => player.nextElementSibling);
+      try {
+        const previewUrl = await fetchPreviewUrl(song);
+        if (!previewUrl) throw new Error(`No preview found for ${song.id}`);
+        players.forEach(player => {
+          player.src = previewUrl;
+          player.hidden = false;
+        });
+        messages.forEach(message => {
+          if (message?.classList.contains("audio-fallback")) {
+            message.textContent = "30-second preview loaded.";
+          }
+        });
+      } catch {
+        players.forEach(player => {
+          player.hidden = true;
+          player.removeAttribute("src");
+        });
+        messages.forEach(message => {
+          if (message?.classList.contains("audio-fallback")) {
+            message.textContent = "Preview not available. Please use the original/search link below.";
+          }
+        });
+      }
+    })
+  );
 }
 
 function applyContextFromUrl() {
@@ -338,6 +380,7 @@ function init() {
   renderPairs();
   renderFeatures();
   attachAudioFallbacks();
+  loadAudioPreviews();
   setPrompt();
   restoreDraft();
 
