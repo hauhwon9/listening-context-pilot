@@ -2,7 +2,7 @@ const songs = [
   { id: "S1", title: "River Flows In You", artist: "Yiruma", role: "Calm instrumental anchor" },
   { id: "S2", title: "Sweden", artist: "C418", role: "Calm ambient anchor" },
   { id: "S3", title: "The Night We Met", artist: "Lord Huron", role: "Low-energy emotional vocal bridge" },
-  { id: "S4", title: "普通朋友", artist: "陶喆", role: "Chinese R&B / vocal bridge" },
+  { id: "S4", title: "普通朋友", artist: "陶喆", role: "Chinese R&B / vocal bridge", previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/07/24/34/07243445-d94a-0f14-12a4-dd46a0886c15/mzaf_13292192010675386253.plus.aac.p.m4a" },
   { id: "S5", title: "Attention", artist: "Charlie Puth", role: "Groove / social bridge" },
   { id: "S6", title: "Blueming", artist: "IU", role: "Bright pop / K-pop bridge" },
   { id: "S7", title: "Closer", artist: "The Chainsmokers ft. Halsey", role: "Electronic pop bridge" },
@@ -73,6 +73,8 @@ function mediaHtml(song) {
 }
 
 async function fetchPreviewUrl(song) {
+  if (song.previewUrl) return song.previewUrl;
+
   const query = new URLSearchParams({
     term: `${song.title} ${song.artist}`,
     media: "music",
