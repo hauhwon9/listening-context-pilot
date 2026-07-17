@@ -29,7 +29,9 @@ The same URL parameters will also work after remote hosting.
 
 ## Audio Previews
 
-The page automatically loads 30-second song previews from Apple's public iTunes Search API. If a preview is unavailable, participants can use the `Open original/search` link.
+The page uses fixed 30-second Apple preview URLs. Several songs have backup preview URLs, so if one source fails the browser will automatically try the next one. This is more stable than searching the iTunes API at runtime, especially for participants on different networks.
+
+Because these preview files are still hosted by an external Apple CDN, playback in mainland China cannot be guaranteed on every network. If you need fully reliable playback, the strongest option is to self-host short clips on the same site, after confirming copyright/ethics permissions.
 
 You can still host your own clips if needed. Put short audio clips in:
 
